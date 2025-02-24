@@ -1,0 +1,18 @@
+/* Light Theme */
+.light {
+    --bg-color: white;
+    --text-color: black;
+  }
+  
+  /* Dark Theme */
+  .dark {
+    --bg-color: black;
+    --text-color: white;
+  }
+  
+  /* Apply Theme */
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+  }
+  

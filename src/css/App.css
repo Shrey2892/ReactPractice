@@ -1,0 +1,44 @@
+/* Light Blue and White Theme using CSS Variables */
+:root {
+    --primary-color: #66aaff; /* Light blue */
+    --secondary-color: #ffffff; /* White background */
+    --text-color: #333333; /* Dark text */
+    --sidebar-bg: #f4f4f4; /* Light sidebar */
+    --sidebar-active-bg: #66aaff; /* Sidebar active color */
+    --navbar-bg: #ffffff; /* Navbar background */
+  }
+  
+  /* Sidebar styling */
+  [data-theme='light'] {
+    --sidebar-bg: #f4f4f4;
+    --sidebar-active-bg: #66aaff;
+    --navbar-bg: #ffffff;
+  }
+  
+  /* Apply the variables throughout */
+  body {
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+  }
+  
+  .main-sidebar {
+    background-color: var(--sidebar-bg);
+  }
+  
+  .main-sidebar .nav-item.active {
+    background-color: var(--sidebar-active-bg);
+  }
+  
+  .navbar {
+    background-color: var(--navbar-bg);
+    box-shadow: none;
+  }
+  
+  .nav-link {
+    color: var(--text-color);
+  }
+  
+  .navbar-nav li.active .nav-link {
+    color: var(--primary-color);
+  }
+  
