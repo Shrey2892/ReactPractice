@@ -11490,7 +11490,7 @@ html {
 }
 
 .wrapper {
-    position: relative
+    position: relative;
 }
 
 .wrapper .content-wrapper {
@@ -13000,6 +13000,7 @@ body.sidebar-collapse:not(.sidebar-mini-md):not(.sidebar-mini) .main-header::bef
         right: auto
     }
 }
+
 
 .navbar-img {
     height: calc(3.5rem + 1px)/2;
@@ -33301,5 +33302,76 @@ a.text-muted:hover {
 [class*=accent-] a.btn-dark {
     color: #fff
 }
+
+/* OTP Box Styles */
+/* .otp-box {
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    font-size: 24px;
+    margin: 5px;
+  } */
+
+  /* src/css/otp.css */
+
+/* Make the OTP input boxes appear inline */
+.otp-inputs {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  /* Style the individual OTP input boxes */
+  .otp-box {
+    width: 50px; /* Adjust width of the input box */
+    height: 50px; /* Height of each input */
+    text-align: center;
+    font-size: 1.5rem; /* Larger font size for better readability */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+  }
+  
+  .otp-box:focus {
+    border-color: #007bff; /* Highlight border on focus */
+  }
+  
+  .otp-box::placeholder {
+    font-size: 1.5rem;
+  }
+  
+  /* For small devices like mobile phones */
+  @media (max-width: 576px) {
+    .otp-inputs {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .otp-box {
+      width: 45px; /* Smaller width for mobile devices */
+      height: 45px;
+      font-size: 1.2rem;
+      margin-bottom: 10px; /* Space between input boxes */
+    }
+  }
+  
+  /* For larger screens */
+  @media (min-width: 768px) {
+    .otp-inputs {
+      justify-content: center;
+    }
+  
+    .otp-box {
+      width: 60px; /* Slightly bigger box for larger screens */
+      height: 60px;
+      font-size: 1.8rem;
+    }
+  }
+
+
+
+  
+  
 
 /*# sourceMappingURL=adminlte.min.css.map */

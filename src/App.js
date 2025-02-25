@@ -1,6 +1,6 @@
 
 import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link,  Route, Routes, useNavigate } from "react-router-dom";
 import $ from "jquery"; // ✅ Import jQuery
 
 import "./css/adminlte.min.css";
@@ -13,7 +13,11 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "admin-lte/dist/js/adminlte.min.js";
 import "./css/theme.css";
 
-import  { useState } from "react";
+import { useState } from "react";
+//import { useNavigate } from "react-router-dom";
+import EmailValidationForm from "./components/EmailVerificationForm";
+import OtpVerification from "./components/OtpVerification";
+import SlidingForm from "./components/SlidingForm";
 
 
 
@@ -21,109 +25,112 @@ import  { useState } from "react";
 
 
 
-const EmailValidationForm = () => {
-  const [email, setEmail] = useState("");
-  const [isValid, setIsValid] = useState(true);
-  const [error, setError] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
-  const [sending, setSending] = useState(false); // To track if the request is in progress
+// const EmailValidationForm = () => {
+//   const [email, setEmail] = useState("");
+//   const [isValid, setIsValid] = useState(true);
+//   const [error, setError] = useState("");
+//   const [successMessage, setSuccessMessage] = useState("");
+//   const [sending, setSending] = useState(false); // To track if the request is in progress
+//   const navigate = useNavigate();
 
-  
 
-  // Regular expression to check for a valid email
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-  // Handle email input change
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
-  };
+//   // Regular expression to check for a valid email
+//   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-  // Validate email on submit
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+//   // Handle email input change
+//   const handleEmailChange = (e) => {
+//     setEmail(e.target.value);
+//   };
 
-    // Reset previous messages
-    setSuccessMessage("");
-    setError("");
+//   // Validate email on submit
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
 
-    // Check if email matches the regex
-    if (!emailRegex.test(email)) {
-      setIsValid(false);
-      setError("Please enter a valid email address.");
-    } else {
-      setIsValid(true);
-      setError("");
-      setSending(true);
+//     // Reset previous messages
+//     setSuccessMessage("");
+//     setError("");
 
-      // Call the backend to send an email
-      try {
-        const response = await fetch("http://localhost:5000/send-email", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email }),
-        });
+//     // Check if email matches the regex
+//     if (!emailRegex.test(email)) {
+//       setIsValid(false);
+//       setError("Please enter a valid email address.");
+//     } else {
+//       setIsValid(true);
+//       setError("");
+//       setSending(true);
 
-        if (response.ok) {
-          setSuccessMessage("Email sent successfully!");
-        } else {
-          setError("Failed to send email.");
-        }
-      } catch (err) {
-        setError("Error sending email: " + err.message);
-      } finally {
-        setSending(false); // Stop the loading indicator
-      }
-    }
-  };
+//       // Call the backend to send an email
+//       try {
+//         const response = await fetch("http://localhost:5000/send-email", {
+//           method: "POST",
+//           headers: {
+//             "Content-Type": "application/json",
+//           },
+//           body: JSON.stringify({ email }),
+//         });
 
-  return (
-    <div className="container mt-5">
-      <div className="row justify-content-center">
-        <div className="col-md-6">
-          <div className="card shadow-lg">
-            <div className="card-header text-center">
-              <h4>Email Validation</h4>
-            </div>
-            <div className="card-body">
-              <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                  <label htmlFor="email">Email:</label>
-                  <input
-                    type="email"
-                    id="email"
-                    className="form-control"
-                    value={email}
-                    onChange={handleEmailChange}
-                    placeholder="Enter your email"
-                  />
-                </div>
+//         if (response.ok) {
+//           //setSuccessMessage("Email sent successfully!");
+//           //navigate("/success");
+//           navigate("/verify-otp", { state: { email } });
+//         } else {
+//           setError("Failed to send email.");
+//         }
+//       } catch (err) {
+//         setError("Error sending email: " + err.message);
+//       } finally {
+//         setSending(false); // Stop the loading indicator
+//       }
+//     }
+//   };
 
-                {/* Show error message */}
-                {!isValid && <p className="text-danger">{error}</p>}
+//   return (
+//     <div className="container mt-5">
+//       <div className="row justify-content-center">
+//         <div className="col-md-6">
+//           <div className="card shadow-lg">
+//             <div className="card-header text-center">
+//               <h4>Email Validation</h4>
+//             </div>
+//             <div className="card-body">
+//               <form onSubmit={handleSubmit}>
+//                 <div className="form-group">
+//                   <label htmlFor="email">Email:</label>
+//                   <input
+//                     type="email"
+//                     id="email"
+//                     className="form-control"
+//                     value={email}
+//                     onChange={handleEmailChange}
+//                     placeholder="Enter your email"
+//                   />
+//                 </div>
 
-                {/* Show success message */}
-                {successMessage && <p className="text-success">{successMessage}</p>}
+//                 {/* Show error message */}
+//                 {!isValid && <p className="text-danger">{error}</p>}
 
-                {/* Show loading state */}
-                {sending ? (
-                  <button type="button" className="btn btn-primary btn-block mt-3" disabled>
-                    Sending...
-                  </button>
-                ) : (
-                  <button type="submit" className="btn btn-primary btn-block mt-3">
-                    Submit
-                  </button>
-                )}
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+//                 {/* Show success message */}
+//                 {successMessage && <p className="text-success">{successMessage}</p>}
+
+//                 {/* Show loading state */}
+//                 {sending ? (
+//                   <button type="button" className="btn btn-primary btn-block mt-3" disabled>
+//                     Sending...
+//                   </button>
+//                 ) : (
+//                   <button type="submit" className="btn btn-primary btn-block mt-3">
+//                     Submit
+//                   </button>
+//                 )}
+//               </form>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
 
 
 
@@ -194,12 +201,18 @@ const App = () => {
 
       {/* ✅ Content Wrapper */}
 
-       {/* Email validation example */}
+      {/* Email validation example */}
       {<div className="content-wrapper">
-        <EmailValidationForm />
+        {/* <EmailValidationForm /> */}
+        <Routes>
+          <Route path="/verify-email" element={<EmailValidationForm />} />
+          <Route path="/verify-otp" element={<OtpVerification />} />
+          <Route path="/" element={<SlidingForm />} />
+        </Routes>
+
       </div>}
 
-      
+
 
 
 
