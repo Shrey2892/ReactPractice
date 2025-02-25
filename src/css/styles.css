@@ -93,3 +93,11 @@
   }
   
 
+  .response.success {
+    color: green;
+  }
+  
+  .response.error {
+    color: red;
+  }
+  

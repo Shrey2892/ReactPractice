@@ -1,6 +1,4 @@
 
-
-
 import React, { useState } from "react";
 import axios from "axios"; // Import Axios for making HTTP requests
 import "../css/styles.css"; // Make sure to create a corresponding CSS file for styling
@@ -14,7 +12,7 @@ const SlidingForm = () => {
   });
   const [error, setError] = useState(""); // For handling errors
   const [loading, setLoading] = useState(false); // For loading state
-  
+  const [responseMessage, setResponseMessage] = useState(""); // To store the API response message
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -28,7 +26,8 @@ const SlidingForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
+    setError(""); // Reset error state before making a request
+    setResponseMessage(""); // Clear previous response message
 
     if (isLogin) {
       // Login
@@ -37,8 +36,7 @@ const SlidingForm = () => {
           email: formData.email,
           password: formData.password,
         });
-        console.log(response.data.message);
-        // You can store the token in localStorage or a context if needed
+        setResponseMessage(response.data.message); // Store the response message
       } catch (err) {
         setError(err.response ? err.response.data.message : "Error logging in.");
       }
@@ -53,17 +51,19 @@ const SlidingForm = () => {
             password: formData.password,
             confirmPassword: formData.confirmPassword,
           });
-          console.log(response.data.message);
+          setResponseMessage(response.data.message); // Store the response message
         } catch (err) {
           setError(err.response ? err.response.data.message : "Error registering.");
         }
       }
     }
-    setLoading(false);
+    setLoading(false); // Stop loading after request is completed
   };
 
+  // Clear response message when toggling between forms
   const toggleForm = () => {
     setIsLogin(!isLogin);
+    setResponseMessage(""); // Clear the response message on toggle
   };
 
   return (
@@ -91,7 +91,7 @@ const SlidingForm = () => {
                   placeholder="Password"
                   required
                 />
-                {error && <p className="error">{error}</p>}
+                {error && <p className="error">{error}</p>} {/* Show error message if any */}
                 <button type="submit" disabled={loading}>
                   {loading ? "Logging in..." : "Login"}
                 </button>
@@ -102,6 +102,7 @@ const SlidingForm = () => {
                   Register
                 </span>
               </p>
+              {responseMessage && <p className="response">{responseMessage}</p>} {/* Display API response */}
             </div>
           ) : (
             // Register Form
@@ -132,7 +133,7 @@ const SlidingForm = () => {
                   placeholder="Confirm Password"
                   required
                 />
-                {error && <p className="error">{error}</p>}
+                {error && <p className="error">{error}</p>} {/* Show error message if any */}
                 <button type="submit" disabled={loading}>
                   {loading ? "Registering..." : "Register"}
                 </button>
@@ -143,6 +144,7 @@ const SlidingForm = () => {
                   Login
                 </span>
               </p>
+              {responseMessage && <p className="response">{responseMessage}</p>} {/* Display API response */}
             </div>
           )}
         </div>
@@ -152,3 +154,4 @@ const SlidingForm = () => {
 };
 
 export default SlidingForm;
+
