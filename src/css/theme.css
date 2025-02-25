@@ -16,3 +16,11 @@
     color: var(--text-color);
   }
   
+  
+
+  @media (max-width: 768px) {
+    .navbar-nav {
+      display: none;  /* This would hide the Home tab on smaller screens */
+    }
+  }
+  
