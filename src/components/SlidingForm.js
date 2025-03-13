@@ -1,11 +1,10 @@
-
 import React, { useState } from "react";
-import axios from "axios"; // Import Axios for making HTTP requests
-import "../css/styles.css"; // Make sure to create a corresponding CSS file for styling
+import "../css/styles.css";
+import { useNavigate } from "react-router-dom";
 
 const SlidingForm = () => {
   const [isLogin, setIsLogin] = useState(true); // State to toggle between Login and Register
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState({ //When on load the fields remain empty
     email: "",
     password: "",
     confirmPassword: "",
@@ -13,6 +12,9 @@ const SlidingForm = () => {
   const [error, setError] = useState(""); // For handling errors
   const [loading, setLoading] = useState(false); // For loading state
   const [responseMessage, setResponseMessage] = useState(""); // To store the API response message
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false); // State for password visibility
+  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,42 +31,76 @@ const SlidingForm = () => {
     setError(""); // Reset error state before making a request
     setResponseMessage(""); // Clear previous response message
 
-    if (isLogin) {
-      // Login
-      try {
-        const response = await axios.post("http://localhost:5000/login", {
+    const url = isLogin ? "http://localhost:5000/login" : "http://localhost:5000/register";
+    const bodyData = isLogin
+      ? {
           email: formData.email,
           password: formData.password,
-        });
-        setResponseMessage(response.data.message); // Store the response message
-      } catch (err) {
-        setError(err.response ? err.response.data.message : "Error logging in.");
-      }
-    } else {
-      // Register
-      if (formData.password !== formData.confirmPassword) {
-        setError("Passwords do not match.");
-      } else {
-        try {
-          const response = await axios.post("http://localhost:5000/register", {
-            email: formData.email,
-            password: formData.password,
-            confirmPassword: formData.confirmPassword,
-          });
-          setResponseMessage(response.data.message); // Store the response message
-        } catch (err) {
-          setError(err.response ? err.response.data.message : "Error registering.");
         }
+      : {
+          email: formData.email,
+          password: formData.password,
+          confirmPassword: formData.confirmPassword,
+        };
+
+    // Make the fetch request
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(bodyData),
+      });
+
+      // Handle response
+      const data = await response.json();
+
+      if (!response.ok) {
+        // Handle errors if any
+        throw new Error(data.message || "Something went wrong");
       }
+
+      setResponseMessage(data.message); // Store the response message
+
+      // If the registration is successful and status is 1, navigate to the verify-email page
+      if (!isLogin && data.status === 1) {
+        navigate("/verify-email");
+      }
+
+    } catch (err) {
+      setError(err.message || "Error occurred while processing the request.");
+    } finally {
+      setLoading(false); // Stop loading after request is completed
     }
-    setLoading(false); // Stop loading after request is completed
   };
 
   // Clear response message when toggling between forms
+  
+
   const toggleForm = () => {
     setIsLogin(!isLogin);
     setResponseMessage(""); // Clear the response message on toggle
+    
+    setFormData({
+      email: "",
+      password: "",
+      confirmPassword: "", // Reset confirmPassword as well, since it's only used in the register form
+    });
+  
+    setError(""); // Clear any errors
   };
+  
+
+  const togglePasswordVisibility = () => {
+    setIsPasswordVisible(!isPasswordVisible);
+  };
+
+  // Toggle confirm password visibility
+  const toggleConfirmPasswordVisibility = () => {
+    setIsConfirmPasswordVisible(!isConfirmPasswordVisible);
+  };
+
 
   return (
     <div className="main-form">
@@ -154,4 +190,3 @@ const SlidingForm = () => {
 };
 
 export default SlidingForm;
-

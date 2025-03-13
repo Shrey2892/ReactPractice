@@ -4,12 +4,9 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-//const connectDB = require("backend/db"); // Import the MongoDB connection function
-const Users = require("./models/userModel"); // Import the User model
-const dotenv = require('dotenv');
-const connectDB = require('./backend/db');  // Import the MongoDB connection function
+const connectDB = require("./db"); // Import the MongoDB connection function
+const User = require("./userModel"); // Import the User model
 
-dotenv.config();  // Load environment variables
 
 
 
@@ -27,7 +24,7 @@ app.use(bodyParser.json());
 app.use(cors(corsOptions));
 
 
-//const dbiUrl = "mongodb://localhost:27017/ReactDemo";
+const dbiUrl = "mongodb://localhost:27017/ReactDemo";
 //app.use(cors()); // Allow frontend to access the backend
 
 connectDB();
@@ -95,36 +92,30 @@ app.post("/verify-otp", (req, res) => {
 });
 
 
-let users = []; // This will act as our "database" for now.
+//let users = []; // This will act as our "database" for now.
 
 
+
+// Register route
 
 app.post("/register", async (req, res) => {
-  const { email, password , confirmPassword} = req.body;
-
-  if (password !== confirmPassword) {
-    return res.status(400).json({ status:0,message:'Passwords do not match'});
-  }
+  const { email, password } = req.body;
   try {
-    const existingUser = await Users.findOne({ email });
+    const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ status:0, message: "User already exists" });
     }
 
-
-    const newUser = new Users({ email, password });
+    const newUser = new User({ email, password });
     await newUser.save();
     res.status(200).json({ status:1,message: "User registered successfully" });
   } catch (err) {
     res.status(500).json({ status:0,message: "Error registering user" });
-    console.log(err);
   }
 });
 
-
-
 // Login route
-app.post('/logins', async (req, res) => {
+app.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
   // Find user by email
@@ -145,41 +136,6 @@ app.post('/logins', async (req, res) => {
   // Send success response
   res.status(200).json({status:1, message: 'Login successful', token });
 });
-
-
-app.post('/login', async (req, res) => {
-  const { email, password } = req.body;
-
-  if (!email || !password) {
-    return res.status(400).json({ message: 'Email and password are required' });
-  }
-
-  try {
-    // Find user by email
-    const user = await Users.findOne({ email });
-    
-    if (!user) {
-      return res.status(401).json({ message: 'Invalid credentials' });
-    }
-
-    // Compare the provided password with the hashed password in the database
-    const isPasswordValid = await user.comparePassword(password);
-    
-    if (!isPasswordValid) {
-      return res.status(401).json({ message: 'Invalid credentials' });
-    }
-
-    // Create JWT token
-    const token = jwt.sign({ userId: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
-    // Respond with the token
-    return res.status(200).json({ message: 'Login successful', token });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: 'Internal server error' });
-  }
-});
-
 
 
 
